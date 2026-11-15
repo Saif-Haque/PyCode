@@ -1,0 +1,50 @@
+{
+  "E001": {
+    "description": "Digital Camera",
+    "category": "Photography",
+    "available_quantity": 4,
+    "loaned_quantity": 2,
+    "borrowers": [
+      "torman@bournemouth.ac.uk",
+      "drdoolittle@bournemouth.ac.uk"
+    ]
+  },
+  "E002": {
+    "description": "Tripod",
+    "category": "Photography",
+    "available_quantity": 8,
+    "loaned_quantity": 2,
+    "borrowers": [
+      "torman@bournemouth.ac.uk",
+      "drdoolittle@bournemouth.ac.uk"
+    ]
+  },
+  "E003": {
+    "description": "Raspberry Pi",
+    "category": "Computing",
+    "available_quantity": 12,
+    "loaned_quantity": 0,
+    "borrowers": []
+  },
+  "E004": {
+    "description": "USB Microphone",
+    "category": "Audio",
+    "available_quantity": 6,
+    "loaned_quantity": 4,
+    "borrowers": [
+      "torman@bournemouth.ac.uk",
+      "drdoolittle@bournemouth.ac.uk",
+      "no1@bournemouth.ac.uk",
+      "no2@bournemouth.ac.uk"
+    ]
+  },
+  "E005": {
+    "description": "Laptop",
+    "category": "Computing",
+    "available_quantity": 5,
+    "loaned_quantity": 1,
+    "borrowers": [
+      "drdoolittle@bournemouth.ac.uk"
+    ]
+  }
+}

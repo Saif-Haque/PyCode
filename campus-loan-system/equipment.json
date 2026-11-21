@@ -18,6 +18,7 @@
       "torman@bournemouth.ac.uk",
       "drdoolittle@bournemouth.ac.uk"
     ],
+    "active_loans": []
   },
   "E003": {
     "description": "Raspberry Pi",

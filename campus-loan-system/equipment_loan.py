@@ -117,6 +117,23 @@ def search_equipment(equipment):
 
 #     print(f"Loan recorded: {quantity} unit(s) of {details['description']} for {borrower}.")
 
+def borrow_equipment(equipment):
+    """Allow a student with a valid Bournemouth email to borrow an available item."""
+    eq_id = input("\nEnter equipment ID to borrow (e.g., E001): ").strip().upper()
+
+    # Check 1: Does this ID exist in our dictionary?
+    if eq_id not in equipment:
+        print(f"Error: Equipment ID '{eq_id}' not found.")
+        return
+
+    item = equipment[eq_id]
+
+    # Check 2: Is at least 1 unit available to borrow?
+    if item["available_quantity"] <= 0:
+        print(f"Sorry, '{item['description']}' ({eq_id}) is currently out of stock.")
+        return
+
+    print(f"Selected: {item['description']} (Available: {item['available_quantity']})")
 
 def return_equipment(equipment):
     """Validate and process an equipment return."""

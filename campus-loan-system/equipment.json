@@ -23,9 +23,11 @@
   "E003": {
     "description": "Raspberry Pi",
     "category": "Computing",
-    "available_quantity": 12,
-    "loaned_quantity": 0,
-    "borrowers": []
+    "available_quantity": 11,
+    "loaned_quantity": 1,
+    "borrowers": [
+      "saif@bournemouth.ac.uk"
+    ]
   },
   "E004": {
     "description": "USB Microphone",

@@ -67,55 +67,7 @@ def search_equipment(equipment):
         print(f"No equipment found matching '{query}'.")
 
 
-# def borrow_equipment(equipment):
-#     """Validate and process an equipment loan."""
-#     if not equipment:
-#         print("No equipment is available.")
-#         return
-
-#     eq_id = input("\nEnter equipment ID: ").strip()
-#     if eq_id not in equipment:
-#         print(f"Equipment ID '{eq_id}' was not found.")
-#         return
-
-#     details = equipment[eq_id]
-#     available = details["available_quantity"]
-#     if available <= 0:
-#         print("This equipment is currently unavailable.")
-#         return
-
-#     borrower = input("Enter borrower Bournemouth email: ").strip().lower()
-#     if REQUIRED_EMAIL_DOMAIN not in borrower:
-#         print(f"Invalid email. The email must use {REQUIRED_EMAIL_DOMAIN}.")
-#         return
-
-#     try:
-#         quantity = int(input("Enter quantity to borrow: ").strip())
-#     except ValueError:
-#         print("Quantity must be a whole number.")
-#         return
-
-#     if quantity <= 0:
-#         print("Quantity must be greater than zero.")
-#         return
-#     if quantity > available:
-#         print(f"Only {available} unit(s) are available.")
-#         return
-
-#     details["available_quantity"] -= quantity
-#     details["loaned_quantity"] += quantity
-
-#     active_loans = details.setdefault("active_loans", [])
-#     matching_loan = next(
-#         (loan for loan in active_loans if loan.get("email") == borrower),
-#         None,
-#     )
-#     if matching_loan:
-#         matching_loan["quantity"] += quantity
-#     else:
-#         active_loans.append({"email": borrower, "quantity": quantity})
-
-#     print(f"Loan recorded: {quantity} unit(s) of {details['description']} for {borrower}.")
+  print(f"Loan recorded: {quantity} unit(s) of {details['description']} for {borrower}.")
 
 def borrow_equipment(equipment):
     """Allow a student with a valid Bournemouth email to borrow an available item."""
@@ -134,69 +86,82 @@ def borrow_equipment(equipment):
         return
 
     print(f"Selected: {item['description']} (Available: {item['available_quantity']})")
+# Check 3: Validate the student's Bournemouth email address
+    email = input(f"Enter borrower email ({REQUIRED_EMAIL_DOMAIN}): ").strip().lower()
 
+    if not email.endswith(REQUIRED_EMAIL_DOMAIN) or email == REQUIRED_EMAIL_DOMAIN:
+        print(f"Error: Email must be a valid '{REQUIRED_EMAIL_DOMAIN}' address.")
+        return
+
+    # Step 4: Update quantities and borrower list in memory
+    item["available_quantity"] -= 1
+    item["loaned_quantity"] += 1
+    item["borrowers"].append(email)
+
+    print(f"Success! {item['description']} ({eq_id}) loaned to {email}.")
 def return_equipment(equipment):
-    """Validate and process an equipment return."""
-    eq_id = input("\nEnter equipment ID: ").strip()
+    """Allow a borrower to return a loaned equipment item."""
+    # Ask for the equipment ID and standardize it (remove spaces, make uppercase)
+    eq_id = input("\nEnter equipment ID to return (e.g., E001): ").strip().upper()
+
+    # Check 1: Does this ID exist in our equipment dictionary?
     if eq_id not in equipment:
-        print(f"Equipment ID '{eq_id}' was not found.")
+        print(f"Error: Equipment ID '{eq_id}' not found.")
         return
 
-    details = equipment[eq_id]
-    borrower = input("Enter borrower Bournemouth email: ").strip().lower()
-    active_loans = details.setdefault("active_loans", [])
-    matching_loan = next(
-        (loan for loan in active_loans if loan.get("email") == borrower),
-        None,
-    )
+    # Create a shortcut reference to this specific item's inner dictionary
+    item = equipment[eq_id]
 
-    if not matching_loan:
-        print(f"No active loan for '{borrower}' was found on this item.")
+    # Check 2: Are any units of this item currently on loan?
+    if item["loaned_quantity"] <= 0:
+        print(f"Error: '{item['description']}' ({eq_id}) has no active loans to return.")
         return
 
-    try:
-        quantity = int(input("Enter quantity to return: ").strip())
-    except ValueError:
-        print("Quantity must be a whole number.")
+    # Check 3: Ask for the borrower's email and validate its domain format
+    email = input(f"Enter borrower email ({REQUIRED_EMAIL_DOMAIN}): ").strip().lower()
+
+    if not email.endswith(REQUIRED_EMAIL_DOMAIN) or email == REQUIRED_EMAIL_DOMAIN:
+        print(f"Error: Email must be a valid '{REQUIRED_EMAIL_DOMAIN}' address.")
         return
 
-    if quantity <= 0:
-        print("Quantity must be greater than zero.")
-        return
-    if quantity > matching_loan["quantity"]:
-        print(f"This borrower currently has {matching_loan['quantity']} unit(s) on loan.")
+    # Check 4: Verify this email is actually on this item's borrower list
+    if email not in item["borrowers"]:
+        print(f"Error: No active loan found for '{email}' on {item['description']} ({eq_id}).")
         return
 
-    matching_loan["quantity"] -= quantity
-    if matching_loan["quantity"] == 0:
-        active_loans.remove(matching_loan)
+    # Step 5: Update quantities and remove one instance of the borrower's email in memory
+    item["available_quantity"] += 1
+    item["loaned_quantity"] -= 1
+    item["borrowers"].remove(email)  # Removes only the first matching email in the list
 
-    details["available_quantity"] += quantity
-    details["loaned_quantity"] = max(0, details["loaned_quantity"] - quantity)
-    print(f"Return recorded: {quantity} unit(s) of {details['description']}.")
-
-
+    print(f"Success! {item['description']} ({eq_id}) returned by {email}.")
+    
 def view_current_loans(equipment):
-    """Display all items that currently have active borrowers."""
+    """Display all equipment items that currently have active borrowers."""
     print("\nCURRENT ACTIVE LOANS")
     print("-" * 72)
 
+    # Keep a running count of individual loans displayed so we know if none exist
     loan_count = 0
+
+    # Loop through every item in the equipment dictionary (eq_id is e.g. 'E001',
+    # and details is the inner dictionary containing description, quantities, and borrowers)
     for eq_id, details in equipment.items():
-        active_loans = details.get("active_loans", [])
-        if not active_loans:
-            continue
 
-        print(f"{eq_id} - {details['description']}")
-        for loan in active_loans:
-            if loan.get("quantity", 0) > 0:
-                print(f"  {loan['email']:<35} Quantity: {loan['quantity']}")
-                loan_count += 1
+        # Only display items that currently have at least 1 unit loaned out
+        if details["loaned_quantity"] > 0:
+            print(f"{eq_id} - {details['description']} (Loaned: {details['loaned_quantity']})")
 
+            # Loop through the list of borrower email strings for this item
+            for borrower in details["borrowers"]:
+                print(f"  - {borrower}")
+                loan_count += 1  # Add 1 to our total active loan counter
+
+    # If the loop finished and loan_count is still 0, nothing is currently borrowed
     if loan_count == 0:
         print("No active loans.")
-    print("-" * 72)
 
+    print("-" * 72)
 
 def main():
     """Main application loop and user menu interaction."""

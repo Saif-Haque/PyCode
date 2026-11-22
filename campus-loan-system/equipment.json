@@ -12,22 +12,21 @@
   "E002": {
     "description": "Tripod",
     "category": "Photography",
-    "available_quantity": 8,
-    "loaned_quantity": 2,
+    "available_quantity": 7,
+    "loaned_quantity": 3,
     "borrowers": [
       "torman@bournemouth.ac.uk",
-      "drdoolittle@bournemouth.ac.uk"
+      "drdoolittle@bournemouth.ac.uk",
+      "saif@bournemouth.ac.uk"
     ],
     "active_loans": []
   },
   "E003": {
     "description": "Raspberry Pi",
     "category": "Computing",
-    "available_quantity": 11,
-    "loaned_quantity": 1,
-    "borrowers": [
-      "saif@bournemouth.ac.uk"
-    ]
+    "available_quantity": 12,
+    "loaned_quantity": 0,
+    "borrowers": []
   },
   "E004": {
     "description": "USB Microphone",
